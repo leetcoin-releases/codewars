@@ -57,7 +57,7 @@ This kata is part 1 of ? of [the series](https://www.codewars.com/collections/68
 The [next kata](https://www.codewars.com/kata/6885f65cb86c03bd3cd25353) in the series will have you fully simulate a Turing Machine.
 
 ### **Credits**
-[towc](https://www.codewars.com/users/towc): came up with the idea and fixed tests
+[towc](https://www.codewars.com/users/towc): came up with the idea and fixed tests<br>
 [hobovsky](https://www.codewars.com/users/hobovsky) - minor curation
 
 ## **Solutions:**
