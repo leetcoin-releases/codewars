@@ -7,7 +7,7 @@ A **Set** lets you store unique values of any type. It comes with some useful me
 
 ## **Complement**
 
-<img src="https://raw.githubusercontent.com/leetcoin-releases/codewars/refs/heads/main/res/ino/481924426.png" style="width: 100%; height: 600;"/>
+<img src="https://raw.githubusercontent.com/leetcoin-releases/codewars/refs/heads/main/res/ino/481927214.png" style="width: 100%; height: 600;"/>
 
 Two sets can be "subtracted". The **relative complement** of B in A, denoted by `A \ B` (or `A − B`), is the set of all elements that are members of A but not members of B. Note that it is valid to "subtract" members of a set that are not in the set, such as removing the element green from the set {1, 2, 3}; doing so has no effect.
 
