@@ -2,3 +2,15 @@
 
 ## **Description:**
 Perform the secret knock() to enter...
+
+## **Solutions**
+
+#### **JavaScript**
+```js
+knock(knock)()();
+```
+
+#### **Python**
+```py
+knock(knock)()();
+```
