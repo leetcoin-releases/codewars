@@ -9,7 +9,7 @@ At each step, a Turing Machine needs to decide three things:
 - what bit (`0` or `1`) to leave at the current position*
 - **where next to move on the tape**
 - which state to enter next*
-It does this based on the current state*, and the **bit at the current position**.
+- It does this based on the current state*, and the **bit at the current position**.
 
 * = we don't worry about these in this kata
 
