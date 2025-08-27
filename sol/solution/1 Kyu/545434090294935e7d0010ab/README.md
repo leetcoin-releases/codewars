@@ -6,7 +6,7 @@ In this Kata we are going to mimic the `SQL` syntax.
 
 To do this, you must implement the `query()` function. This function returns an object with the following methods:
 
-```sql
+```js
 {
   select: ...,
   from: ...,
@@ -21,7 +21,7 @@ The methods are chainable and the query is executed by calling the `execute` met
 
 ⚠️ **Note:** The order of appearance of a clause in a query doesn't matter. However, when it comes time for you to run the query, you MUST execute the clauses in this logical order: `from` first, then `where`, then `groupBy`, then `having`, then `select` and finally `orderBy`.
 
-```sql
+```js
 // SELECT * FROM numbers
 var numbers = [1, 2, 3];
 query().select().from(numbers).execute(); // [1, 2, 3]
@@ -31,7 +31,7 @@ query().from(numbers).select().execute(); // [1, 2, 3]
 ```
 
 Of course, you can make queries over object collections:
-```sql
+```js
 var persons = [
   {name: 'Peter', profession: 'teacher', age: 20, maritalStatus: 'married'},
   {name: 'Michael', profession: 'teacher', age: 50, maritalStatus: 'single'},
@@ -48,7 +48,7 @@ query().select().from(persons).execute();
 ```
 
 You can select some fields:
-```sql
+```js
 function profession(person) {
   return person.profession;
 }
@@ -59,7 +59,7 @@ query().select(profession).from(persons).execute(); // select receives a functio
 ```
 
 If you repeat a SQL clause (except `where()` or `having()`), an exception will be thrown:
-```sql
+```js
 query().select().select().execute(); // Error('Duplicate SELECT');
 query().select().from([]).select().execute(); // Error('Duplicate SELECT');
 query().select().from([]).from([]).execute(); // Error('Duplicate FROM');
@@ -67,7 +67,7 @@ query().select().from([]).where().where() // This is an AND filter (see below)
 ```
 
 You can omit any `SQL` clause:
-```sql
+```js
 var numbers = [1, 2, 3];
 
 query().select().execute(); // []
@@ -76,7 +76,7 @@ query().execute(); // []
 ```
 
 You can apply filters:
-```sql
+```js
 function isTeacher(person) {
   return person.profession === 'teacher';
 }
@@ -99,7 +99,7 @@ query().select(name).from(persons).where(isTeacher).execute();
 ```
 
 Aggregations are also possible:
-```sql
+```js
 // SELECT * FROM persons GROUP BY profession <- Bad in SQL but possible in this kata
 query().select().from(persons).groupBy(profession).execute(); 
 // [
@@ -131,13 +131,13 @@ query().select().from(persons).groupBy(profession).execute();
 ```
 
 You can mix `where()` with `groupBy()`:
-```sql
+```js
 // SELECT * FROM persons WHERE profession='teacher' GROUP BY profession
 query().select().from(persons).where(isTeacher).groupBy(profession).execute();
 ```
 
 Or with `select()`:
-```sql
+```js
 function professionGroup(group) {
   return group[0];
 }
@@ -148,7 +148,7 @@ query().select(professionGroup).from(persons).groupBy(profession).execute();
 ```
 
 Another example:
-```sql
+```js
 function isEven(number) {
   return number % 2 === 0;
 }
@@ -169,7 +169,7 @@ query().select().from(numbers).groupBy(parity).execute();
 ```
 
 Multilevel grouping:
-```sql
+```js
 function isPrime(number) {
   if (number < 2) {
     return false;
@@ -190,7 +190,7 @@ query().select().from(numbers).groupBy(parity, prime).execute();
 
 `orderBy` should be called after `groupBy`, so the values passed to `orderBy` function are the grouped results by the `groupBy` function.<br>
 Filter groups with `having()`:
-```sql
+```js
 function odd(group) {
   return group[0] === 'odd';
 }
@@ -201,7 +201,7 @@ query().select().from(numbers).groupBy(parity).having(odd).execute();
 ```
 
 You can order the results:
-```sql
+```js
 var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 function descendentCompare(number1, number2) {
@@ -214,7 +214,7 @@ query().select().from(numbers).orderBy(descendentCompare).execute();
 ```
 
 `from()` supports multiple collections:
-```sql
+```js
 var teachers = [
   {
     teacherId: '1',
@@ -252,7 +252,7 @@ query().select(student).from(teachers, students).where(teacherJoin).execute();
 ```
 
 Finally, `where()` and `having()` admit multiple `AND` and `OR` filters:
-```sql
+```js
 function tutor1(join) {
   return join[1].tutor === "1";
 }
