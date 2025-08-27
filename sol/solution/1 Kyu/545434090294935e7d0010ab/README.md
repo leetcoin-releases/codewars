@@ -314,3 +314,219 @@ query().select(frequency).from(numbers).groupBy(id).having(greatThan1).having(is
 
 If any of the unrepeatable clauses are repeated in the query, your solution **MUST** raise an `Error` object with the **error message** `"duplicate"` **followed by the name of the duplicated clause**. If the clause is multi-word, merge it into one (ex: `groupby`).
 - For example, if the `groupBy` clause is duplicated, you should throw an Error with the exact string message "`duplicate groupby`" (capitalization doesn't matter).
+
+## **Solutions:**
+
+#### **JavaScript**
+```js
+function query() {
+  const state = {
+    from: null,
+    select: null,
+    where: [],
+    groupBy: null,
+    having: [],
+    orderBy: null,
+    errors: [],
+    flags: {
+      select: false,
+      from: false,
+      groupBy: false,
+      orderBy: false
+    }
+  };
+  function cartesianProduct(arrays) {
+    return arrays.reduce((a, b) => a.flatMap(d => b.map(e => [...d, e])), [[]]);
+  }
+  function applyWhere(data) {
+    if (!state.where.length) return data;
+    return state.where.reduce((acc, conditions) => {
+      return acc.filter(item => conditions.some(fn => fn(item)));
+    }, data);
+  }
+  function groupData(data, fns) {
+    if (!fns || !fns.length) return data;
+    const groupFn = fns[0];
+    const groups = new Map();
+    for (const item of data) {
+      const key = groupFn(item);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(item);
+    }
+    const result = [];
+    for (const [key, values] of groups) {
+      result.push([key, groupData(values, fns.slice(1))]);
+    }
+    return result;
+  }
+  function applyHaving(groups) {
+    if (!state.having.length) return groups;
+    return state.having.reduce((acc, conditions) => {
+      return acc.filter(group => conditions.some(fn => fn(group)));
+    }, groups);
+  }
+  function applySelect(data) {
+    if (!state.select) return data;
+    return data.map(state.select);
+  }
+  function applyOrderBy(data) {
+    if (!state.orderBy) return data;
+    return data.slice().sort(state.orderBy);
+  }
+  function markDuplicate(clause) {
+    state.errors.push(`Duplicate ${clause}`);
+  }
+  return {
+    select(fn) {
+      if (state.flags.select) {
+        markDuplicate('select');
+      } else {
+        state.flags.select = true;
+        state.select = fn || null;
+      }
+      return this;
+    },
+    from(...tables) {
+      if (state.flags.from) {
+        markDuplicate('from');
+      } else {
+        state.flags.from = true;
+        state.from = tables;
+      }
+      return this;
+    },
+    where(...conditions) {
+      state.where.push(conditions);
+      return this;
+    },
+    groupBy(...fns) {
+      if (state.flags.groupBy) {
+        markDuplicate('groupby');
+      } else {
+        state.flags.groupBy = true;
+        state.groupBy = fns;
+      }
+      return this;
+    },
+    having(...conditions) {
+      state.having.push(conditions);
+      return this;
+    },
+    orderBy(fn) {
+      if (state.flags.orderBy) {
+        markDuplicate('orderby');
+      } else {
+        state.flags.orderBy = true;
+        state.orderBy = fn;
+      }
+      return this;
+    },
+    execute() {
+      if (state.errors.length) throw new Error(state.errors[0]);
+      let data = [];
+      if (state.from) {
+        data = state.from.length === 1 ? state.from[0] : cartesianProduct(state.from);
+      }
+      data = applyWhere(data);
+      if (state.groupBy) {
+        data = groupData(data, state.groupBy);
+        data = applyHaving(data);
+      }
+      data = applySelect(data);
+      data = applyOrderBy(data);
+      return data;
+    }
+  };
+}
+```
+
+#### **Python**
+```py
+from preloaded import DuplicateFromError, DuplicateSelectError, DuplicateGroupByError, DuplicateOrderByError
+from itertools import product
+from functools import cmp_to_key
+def query():
+    return Query()
+class Query:
+    def __init__(self):
+        self._from_tables = None
+        self._select_func = None
+        self._where_conditions = []
+        self._group_by_funcs = None
+        self._having_conditions = []
+        self._order_by_func = None
+        self._from_called = False
+        self._select_called = False
+        self._group_by_called = False
+        self._order_by_called = False
+    def select(self, func=None):
+        if self._select_called:
+            raise DuplicateSelectError()
+        self._select_called = True
+        self._select_func = func
+        return self
+    def from_(self, *tables):
+        if self._from_called:
+            raise DuplicateFromError()
+        self._from_called = True
+        self._from_tables = tables
+        return self
+    def where(self, *conditions):
+        if conditions:
+            self._where_conditions.append(conditions)
+        return self
+    def group_by(self, *funcs):
+        if self._group_by_called:
+            raise DuplicateGroupByError()
+        self._group_by_called = True
+        self._group_by_funcs = funcs
+        return self
+    def having(self, *conditions):
+        if conditions:
+            self._having_conditions.append(conditions)
+        return self
+    def order_by(self, func):
+        if self._order_by_called:
+            raise DuplicateOrderByError()
+        self._order_by_called = True
+        self._order_by_func = func
+        return self
+    def execute(self):
+        if not self._from_tables:
+            data = []
+        elif len(self._from_tables) == 1:
+            data = list(self._from_tables[0])
+        else:
+            data = list(product(*self._from_tables))
+            data = [list(row) for row in data]
+        if self._where_conditions:
+            for condition_group in self._where_conditions:
+                data = [item for item in data if any(cond(item) for cond in condition_group)]
+        if self._group_by_funcs:
+            data = self._group_data(data, self._group_by_funcs)
+        if self._having_conditions and self._group_by_funcs:
+            for condition_group in self._having_conditions:
+                data = [item for item in data if any(cond(item) for cond in condition_group)]
+        if self._select_func:
+            data = [self._select_func(item) for item in data]
+        if self._order_by_func:
+            data.sort(key=cmp_to_key(self._order_by_func))
+        return data
+    def _group_data(self, data, group_funcs):
+        if not group_funcs:
+            return data
+        groups = {}
+        for item in data:
+            key = group_funcs[0](item)
+            if key not in groups:
+                groups[key] = []
+            groups[key].append(item)
+        if len(group_funcs) > 1:
+            result = []
+            for key, group_data in groups.items():
+                sub_groups = self._group_data(group_data, group_funcs[1:])
+                result.append([key, sub_groups])
+        else:
+            result = [[key, group_data] for key, group_data in groups.items()]
+        return result
+```
