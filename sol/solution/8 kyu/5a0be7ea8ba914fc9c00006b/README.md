@@ -79,3 +79,21 @@ Write a function that receives the speed (in cm/s) of a petal as input, and retu
 > ```
 > #
 >
+
+
+<table width="100%">
+<tr>
+<td width="25%">
+<a href="https://www.codewars.com/kata/54bebed0d5b56c5b2600027f/train/typescript" target="_blank">
+  <img src="https://cdn.iconscout.com/icon/free/png-512/free-typescript-icon-svg-png-download-2945272.png?f=webp&w=150" alt="TypeScript">
+</a>
+</td>
+<td width="100%%" valign="top">
+
+**Typescript**
+  
+```ts
+export function sakuraFall(v: number): number {
+  if (v <= 0) return 0;
+  return 400 / v;
+}
