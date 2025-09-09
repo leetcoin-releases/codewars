@@ -70,7 +70,7 @@ Write a function that receives the speed (in cm/s) of a petal as input, and retu
 > end
 > ```
 > #
-> [![img](https://cdn.iconscout.com/icon/free/png-512/free-typescript-icon-svg-png-download-2945272.png?f=webp&w=24)](https://www.codewars.com/kata/54bebed0d5b56c5b2600027f/train/typescript) **Typescript**
+> [![img](https://cdn.iconscout.com/icon/free/png-512/free-typescript-icon-svg-png-download-2945272.png?f=webp&w=16)](https://www.codewars.com/kata/54bebed0d5b56c5b2600027f/train/typescript) **Typescript**
 > ```ts
 > export function sakuraFall(v: number): number {
 >   if (v <= 0) return 0;
