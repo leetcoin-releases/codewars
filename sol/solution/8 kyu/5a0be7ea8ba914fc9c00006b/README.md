@@ -88,7 +88,7 @@ Write a function that receives the speed (in cm/s) of a petal as input, and retu
   <img src="https://cdn.iconscout.com/icon/free/png-512/free-typescript-icon-svg-png-download-2945272.png?f=webp&w=150" alt="TypeScript">
 </a>
 </td>
-<td width="100%%" valign="top">
+<td width="100%" valign="top">
 
 **Typescript**
   
